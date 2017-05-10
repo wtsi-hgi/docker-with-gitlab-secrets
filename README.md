@@ -4,7 +4,7 @@ Example usage:
 ```bash
 
 # Config will default to ~/.dwgs.conf if not specified
-docker-with-gitlab-secrets --dwgs-config /somewhere/dwgs.conf --dwgs-tenant hgi-ci \
+docker-with-gitlab-secrets --dwgs-config /somewhere/dwgs.conf --dwgs-project hgi-systems \
     --rm --env-file /higher/precedence -e HIGHEST_PRECEDENCE 123 -it run ubuntu bash
 ```
 
@@ -13,5 +13,5 @@ Example configuration:
 gitlab:
   url: https://gitlab.example.com
   token: my-token
-  tenant: hgi-ci    # Optional default tenant, which will be overriden by if `dwgs-tenant` is specified
+  project: hgi-ci    # Optional default project, which will be overriden by if `dwgs-project` is specified
 ```
