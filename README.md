@@ -4,7 +4,7 @@ Example usage:
 ```bash
 
 # Config will default to ~/.dwgs.conf if not specified
-docker-with-gitlab-secrets --dwgs-token /somewhere/dwgs.conf --dwgs-tenant hgi-ci \
+docker-with-gitlab-secrets --dwgs-config /somewhere/dwgs.conf --dwgs-tenant hgi-ci \
     --rm --env-file /higher/precedence -e HIGHEST_PRECEDENCE 123 -it run ubuntu bash
 ```
 
