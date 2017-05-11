@@ -1,13 +1,22 @@
 import os
 from argparse import ArgumentParser
 
+import sys
+
+from gitlabbuildvariables.common import GitLabConfig
+from gitlabbuildvariables.manager import ProjectVariablesManager
 from typing import List, NamedTuple
+
+from dockerwithgitlabsecrets.configuration import parse_configuration
+from dockerwithgitlabsecrets.wrapper import run_wrapped, ProgramOutputType
 
 CONFIG_PARAMETER = "dwgs-config"
 PROJECT_PARAMETER = "dwgs-project"
 ENV_FILE_PARAMETER = "env-file"
 
 DEFAULT_CONFIG_FILE = f"{os.path.expanduser('~')}"
+
+_NAMESPACE_PROJECT_SEPARATOR = "/"
 
 
 class CliConfiguration(NamedTuple):
@@ -46,11 +55,35 @@ def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
                             env_file=program_args[ENV_FILE_PARAMETER], docker_args=docker_args)
 
 
+def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
+    """
+    TODO
+    :param cli_configuration: 
+    :return: 
+    """
+    configuration = parse_configuration(cli_configuration.config_location if
+                                        cli_configuration.config_location is not None else DEFAULT_CONFIG_FILE)
+
+    project = cli_configuration.project if cli_configuration.project is not None else configuration.gitlab.project
+    if _NAMESPACE_PROJECT_SEPARATOR not in project:
+        project = f"{configuration.gitlab.namespace}{_NAMESPACE_PROJECT_SEPARATOR}{project}"
+
+    gitlab_config = GitLabConfig(configuration.gitlab.url, configuration.gitlab.token)
+    project_variables_manager = ProjectVariablesManager(gitlab_config, project)
+
+    return run_wrapped(cli_configuration.docker_args, project_variables_manager, cli_configuration.env_file)
+
+
 def main():
-    # stderr.write(process.stdout)
-    # stdout.write(process.stderr)
-    # exit(process.returncode)
-    pass
+    """
+    TODO
+    :return: 
+    """
+    cli_configuration = parse_cli_arguments(sys.argv[1:])
+    returncode, stdout, stderr = run(cli_configuration)
+    sys.stdout.write(stderr)
+    sys.stderr.write(stdout)
+    exit(returncode)
 
 
 if __name__ == "__main__":

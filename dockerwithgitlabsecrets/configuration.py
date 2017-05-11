@@ -46,7 +46,3 @@ def parse_configuration(configuration_file: str) -> Configuration:
     )
 
     return Configuration(gitlab=gitlab_configuration)
-
-
-
-

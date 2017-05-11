@@ -4,4 +4,6 @@ EXAMPLE_LOCATION = "/my/location"
 EXAMPLE_LOCATION_2 = "/my/other/location"
 EXAMPLE_URL = "http://gitlab.example.com"
 EXAMPLE_TOKEN = "my-token"
-EXAMPLE_DOCKER_ARGS = ["-e", "test", "-v", EXAMPLE_LOCATION, "-it", "--rm", "--no-healthcheck", "run", "ubuntu", "bash"]
+EXAMPLE_DOCKER_ARGS = ["run", "-e", "test", "-v", EXAMPLE_LOCATION, "-it", "--rm", "--no-healthcheck", "ubuntu", "bash"]
+EXAMPLE_PARAMETER = "MY_SECRET"
+EXAMPLE_VALUE="secret123"

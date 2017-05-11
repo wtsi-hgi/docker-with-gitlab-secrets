@@ -19,8 +19,7 @@ setup(
     long_description=read_markdown("README.md"),
     entry_points={
         "console_scripts": [
-            # TODO
-            # "openstack-tenant-cleaner=openstacktenantcleaner.entrypoint:main",
+            "docker-with-gitlab-secrets=dockerwithgitlabsecrets.entrypoint:main",
         ]
     }
 )
