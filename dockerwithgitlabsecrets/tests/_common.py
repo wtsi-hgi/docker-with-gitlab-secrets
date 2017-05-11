@@ -1,0 +1,6 @@
+EXAMPLE_PROJECT = "test-project"
+EXAMPLE_NAMESPACE = "hgi"
+EXAMPLE_LOCATION = "/my/location"
+EXAMPLE_LOCATION_2 = "/my/other/location"
+EXAMPLE_URL = "http://gitlab.example.com"
+EXAMPLE_TOKEN = "my-token"

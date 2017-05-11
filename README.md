@@ -13,5 +13,6 @@ Example configuration:
 gitlab:
   url: https://gitlab.example.com
   token: my-token
-  project: hgi-ci    # Optional default project, which will be overriden by if `dwgs-project` is specified
+  project: hgi-systems  # Optional default project, which will be overriden by if `dwgs-project` is specified
+  namespace: hgi        # Optional default namespace  
 ```
