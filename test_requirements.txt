@@ -1,0 +1,4 @@
+git+https://github.com/wtsi-hgi/useintest.git@143477f800bb8128c4cb547e9eff1049a66eb904#egg=useintest
+
+# XXX: This is actually a second order dependency but putting here for now to solve pip's inadequacies
+git+https://github.com/wtsi-hgi/python-common.git@f38b37ee763eafb9f9ad995f6b53d06ef46cc195#egg=hgicommon

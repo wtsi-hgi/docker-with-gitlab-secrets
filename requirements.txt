@@ -1,2 +1,2 @@
-git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v1.0.0#gitlabbuildvariablesmanager
+git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v1.0.0#egg=gitlabbuildvariables
 PyYAML

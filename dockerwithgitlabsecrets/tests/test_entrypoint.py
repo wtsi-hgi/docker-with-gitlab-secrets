@@ -2,10 +2,12 @@ import unittest
 
 from dockerwithgitlabsecrets.entrypoint import CliConfiguration, parse_cli_arguments, CONFIG_PARAMETER, \
     PROJECT_PARAMETER, ENV_FILE_PARAMETER
-from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_LOCATION, EXAMPLE_LOCATION_2
+from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_LOCATION, EXAMPLE_LOCATION_2, \
+    EXAMPLE_DOCKER_ARGS
 
 _CONFIG_PARAMETER_FLAG = f"--{CONFIG_PARAMETER}"
 _PROJECT_PARAMETER_FLAG = f"--{PROJECT_PARAMETER}"
+_ENV_FILE_PARAMETER_FLAG = f"--{ENV_FILE_PARAMETER}"
 
 
 class TestParseCliArguments(unittest.TestCase):
@@ -23,17 +25,20 @@ class TestParseCliArguments(unittest.TestCase):
         self.assertEquals(expected, parse_cli_arguments(arguments))
 
     def test_parse_program_arguments_with_docker_arguments(self):
-        arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT, "-e",
-                     "test", "-it", "--rm", "run", "ubuntu"]
-        expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION)
+        arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT] \
+                    + EXAMPLE_DOCKER_ARGS
+        expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
+                                    docker_args=EXAMPLE_DOCKER_ARGS)
         self.assertEquals(expected, parse_cli_arguments(arguments))
 
     def test_parse_program_arguments_with_env_docker_argument(self):
-        arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, ENV_FILE_PARAMETER,
-                     EXAMPLE_LOCATION_2, "--rm", "run", "ubuntu"]
+        arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT,
+                     _ENV_FILE_PARAMETER_FLAG, EXAMPLE_LOCATION_2] + EXAMPLE_DOCKER_ARGS
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
-                                    env_file=EXAMPLE_LOCATION_2)
-        self.assertEquals(expected, parse_cli_arguments(arguments))
+                                    env_file=EXAMPLE_LOCATION_2, docker_args=EXAMPLE_DOCKER_ARGS)
+        configuration = parse_cli_arguments(arguments)
+        self.assertEquals(expected, configuration)
+        self.assertNotIn(ENV_FILE_PARAMETER, configuration.docker_args)
 
 
 if __name__ == '__main__':

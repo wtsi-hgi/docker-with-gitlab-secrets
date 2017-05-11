@@ -1,3 +1,4 @@
+import yaml
 from typing import NamedTuple
 
 GITLAB_PROPERTY = "gitlab"
@@ -29,3 +30,23 @@ def parse_configuration(configuration_file: str) -> Configuration:
     Parses the program configuration in the given file.
     :return: the configuration
     """
+    with open(configuration_file, "r") as file:
+        json_configuration = yaml.load(file)
+
+    project = json_configuration[GITLAB_PROPERTY][GITLAB_PROJECT_PROPERTY] \
+        if GITLAB_PROJECT_PROPERTY in json_configuration[GITLAB_PROPERTY] else None
+    namespace = json_configuration[GITLAB_PROPERTY][GITLAB_NAMESPACE_PROPERTY] \
+        if GITLAB_NAMESPACE_PROPERTY in json_configuration[GITLAB_PROPERTY] else None
+
+    gitlab_configuration = GitLabConfiguration(
+        url=json_configuration[GITLAB_PROPERTY][GITLAB_URL_PROPERTY],
+        token=json_configuration[GITLAB_PROPERTY][GITLAB_TOKEN_PROPERTY],
+        project=project,
+        namespace=namespace
+    )
+
+    return Configuration(gitlab=gitlab_configuration)
+
+
+
+
