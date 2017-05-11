@@ -4,16 +4,20 @@ from sys import stdout, stderr
 from tempfile import NamedTemporaryFile
 
 from gitlabbuildvariables.manager import ProjectVariablesManager
-from typing import List
+from typing import List, Tuple
 
 from dockerwithgitlabsecrets.entrypoint import ENV_FILE_PARAMETER
 
 _DOCKER_ENV_FILE_SUFFIX = ".env"
 _DOCKER_BINARY = "docker"
 
+StdOutType = str
+StdErrType = str
+ReturnCodeType = int
 
-def run_wrapped(
-        docker_arguments: List[str], project_variables_manager: ProjectVariablesManager, env_file_location: str=None):
+
+def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectVariablesManager,
+                env_file_location: str=None) -> Tuple[ReturnCodeType, StdOutType, StdErrType]:
     """
     TODO
     :param docker_arguments: 
@@ -34,6 +38,4 @@ def run_wrapped(
         docker_call = [_DOCKER_BINARY, ENV_FILE_PARAMETER, env_file.name] + docker_arguments
         process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    stderr.write(process.stdout)
-    stdout.write(process.stderr)
-    exit(process.returncode)
+    return process.stdout, process.stderr, process.returncode
