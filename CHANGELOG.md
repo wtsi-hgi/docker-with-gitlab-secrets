@@ -1,4 +1,8 @@
 # Change Log
+## 1.0.0 - 2017-05-12
+### Added
+- Ability to run Docker interactively.
+
 ## 0.1.2 - 2017-05-12
 ### Changed
 - Further Improved documentation.

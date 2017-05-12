@@ -74,9 +74,6 @@ gitlab:
 
 
 ## Known Issues
-- **Interactive `run` commands are not yet supported.** You can work around this for the time being by 
-running a container with the wrapper non-interactively and then connecting to it without the wrapper using 
-`docker exec`. 
 - Docker [cannot pass newlines in variables via `--env-file`](https://github.com/moby/moby/issues/12997). Therefore 
 multiline GitLab variables with have their line-breaks escaped to \\n.
 
