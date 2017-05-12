@@ -6,6 +6,22 @@
 # Docker With GitLab Secrets
 *Wraps Docker to run with GitLab build variables.*
 
+## Installation
+Prerequisites:
+- Python >= 3.6
+- docker
+
+Stable releases can be installed via [PyPI](https://pypi.python.org/pypi/dockerwithgitlabsecrets):
+```bash
+$ pip3 install dockerwithgitlabsecrets
+```
+
+Bleeding edge versions can be installed directly from GitHub:
+```bash
+$ pip3 install git+https://github.com/wtsi-hgi/docker-with-gitlab-secrets.git@commit_id_or_branch_or_tag#egg=dockerwithgitlabsecrets
+```
+
+
 ## Usage
 ```bash
 usage: docker-with-gitlab-secrets [-h] [--dwgs-config DWGS_CONFIG]
