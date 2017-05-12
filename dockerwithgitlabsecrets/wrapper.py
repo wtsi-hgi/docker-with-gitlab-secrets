@@ -1,15 +1,14 @@
+import logging
 import os
 import subprocess
 from tempfile import NamedTemporaryFile
-from time import sleep
 
 from gitlabbuildvariables.manager import ProjectVariablesManager
-import logging
-from typing import List, Tuple, Optional, Iterable, Dict
+from typing import List, Tuple, Optional, Dict
 
 _DOCKER_ENV_FILE_SUFFIX = ".env"
 _DOCKER_BINARY = "docker"
-_SUPPORTED_DOCKER_ACTIONS = ["exec", "run"]
+_SUPPORTED_DOCKER_ACTIONS = ["run"]
 
 _LINE_BREAK = "\n"
 SAFE_LINE_BREAK = "\\n"
