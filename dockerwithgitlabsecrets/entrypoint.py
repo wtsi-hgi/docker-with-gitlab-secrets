@@ -8,7 +8,7 @@ from gitlabbuildvariables.manager import ProjectVariablesManager
 from typing import List, NamedTuple
 
 from dockerwithgitlabsecrets.configuration import parse_configuration
-from dockerwithgitlabsecrets.wrapper import run_wrapped, ProgramOutputType
+from dockerwithgitlabsecrets.wrapper import run_wrapped, ProgramOutputType, get_supported_action_index
 
 CONFIG_PARAMETER = "dwgs-config"
 PROJECT_PARAMETER = "dwgs-project"
@@ -20,9 +20,6 @@ DEFAULT_CONFIG_FILE = f"{os.path.expanduser('~')}/.dwgs-config.yml"
 
 _NAMESPACE_PROJECT_SEPARATOR = "/"
 
-DOCKER_PARAMETER_HELP = "Docker argument in which this program wants to know about - see: " \
-                        "https://docs.docker.com/engine/reference/commandline/run/ for more information"
-
 
 class CliConfiguration(NamedTuple):
     """
@@ -33,6 +30,19 @@ class CliConfiguration(NamedTuple):
     project: str = None
     env_file: str = None
     interactive: bool = False
+
+
+def _is_interactive(docker_arguments: List[str]) -> bool:
+    """
+    TODO
+    :param docker_arguments: 
+    :return: 
+    """
+    supported_action_index = get_supported_action_index(docker_arguments)
+    if supported_action_index is None:
+        return False
+    return len({f"-{TTY_PARAMETER}", f"-{TTY_PARAMETER}{STDIN_OPEN_PARAMETER}",
+                f"-{STDIN_OPEN_PARAMETER}{TTY_PARAMETER}"} & set(docker_arguments[supported_action_index:])) > 0
 
 
 def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
@@ -55,25 +65,23 @@ def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
         help="GitLab project (if not namespaced in the form \"namespace/project\", the default namespace defined in "
              "the configuration file will be used). If not defined, the default project in the configuration file will "
              "be used")
-    parser.add_argument(f"--{ENV_FILE_PARAMETER}", type=str, help=DOCKER_PARAMETER_HELP)
+    parser.add_argument(f"--{ENV_FILE_PARAMETER}", type=str,
+                        help="Docker argument in which this program wants to know about - see: https://docs.docker.com/engine/reference/commandline/run/ for more information")
 
     parsed_program_args, parsed_docker_args = parser.parse_known_args(program_args)
     parsed_program_args = {key.replace("_", "-"):value for key, value in vars(parsed_program_args).items()}
 
-    # FIXME: This is by no way perfect as it will break e.g. docker run -d ubuntu command -i
-    interactive = len({f"-{TTY_PARAMETER}", f"-{TTY_PARAMETER}{STDIN_OPEN_PARAMETER}",
-                       f"-{STDIN_OPEN_PARAMETER}{TTY_PARAMETER}"} & set(parsed_docker_args)) > 0
-
     return CliConfiguration(
         config_location=parsed_program_args[CONFIG_PARAMETER], project=parsed_program_args[PROJECT_PARAMETER],
-        env_file=parsed_program_args[ENV_FILE_PARAMETER], interactive=interactive, docker_args=parsed_docker_args)
+        env_file=parsed_program_args[ENV_FILE_PARAMETER], interactive=_is_interactive(parsed_docker_args),
+        docker_args=parsed_docker_args)
 
 
 def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
     """
-    TODO
-    :param cli_configuration: 
-    :return: 
+    Runs the program according to the given run configuration. 
+    :param cli_configuration: the run configuration
+    :return: the run output
     """
     configuration = parse_configuration(cli_configuration.config_location if
                                         cli_configuration.config_location is not None else DEFAULT_CONFIG_FILE)
@@ -91,8 +99,7 @@ def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
 
 def main():
     """
-    TODO
-    :return: 
+    Main method.
     """
     cli_configuration = parse_cli_arguments(sys.argv[1:])
     returncode, stdout, stderr = run(cli_configuration)
