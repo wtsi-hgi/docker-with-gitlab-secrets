@@ -3,6 +3,7 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
+import sys
 from gitlabbuildvariables.manager import ProjectVariablesManager
 from typing import List, Tuple, Optional, Dict
 
@@ -52,12 +53,13 @@ def warn_if_new_lines_in_variables(variables: Dict[str, str]):
 
 
 def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectVariablesManager,
-                env_file_location: str=None) -> ProgramOutputType:
+                env_file_location: str=None, interactive: bool=False) -> ProgramOutputType:
     """
     TODO
     :param docker_arguments: 
     :param project_variables_manager: 
     :param env_file_location: 
+    :param interactive:
     :return: 
     """
     docker_action_index = get_supported_action_index(docker_arguments)
@@ -68,6 +70,7 @@ def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectV
         docker_call += docker_arguments
         process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
+        returncode = process.returncode
     else:
         with NamedTemporaryFile(suffix=_DOCKER_ENV_FILE_SUFFIX, mode="w") as env_file:
             if env_file_location is not None:
@@ -84,7 +87,13 @@ def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectV
             from dockerwithgitlabsecrets.entrypoint import ENV_FILE_PARAMETER
             docker_call += docker_arguments[0:docker_action_index+1] + [f"--{ENV_FILE_PARAMETER}", env_file.name] \
                            + docker_arguments[docker_action_index+1:]
-            process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
 
-    return process.returncode, stdout.decode(_ENCODING), stderr.decode(_ENCODING)
+            if interactive:
+                returncode = os.WEXITSTATUS(os.system(" ".join(docker_call)))
+                return returncode, "", ""
+            else:
+                process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                stdout, stderr = process.communicate()
+                returncode = process.returncode
+
+    return returncode, stdout.decode(_ENCODING), stderr.decode(_ENCODING)
