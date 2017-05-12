@@ -23,6 +23,7 @@ $ pip3 install git+https://github.com/wtsi-hgi/docker-with-gitlab-secrets.git@co
 
 
 ## Usage
+Wrap your prefixed Docker command with:
 ```bash
 usage: docker-with-gitlab-secrets [-h] [--dwgs-config DWGS_CONFIG]
                                   [--dwgs-project DWGS_PROJECT]
@@ -47,6 +48,19 @@ optional arguments:
                         env-file
 ```
 
+### Examples
+Run a new container with secrets from a GitLab project:
+```bash
+docker-with-gitlab-secrets --dwgs-config my-config.yml --dwgs-project my-project \
+    run --rm alpine printenv GITLAB_SECRET
+```
+
+Wrapping unrelated Docker commands will still work:
+```bash
+docker-with-gitlab-secrets --dwgs-config my-config.yml \
+    version
+```
+
 
 ## Configuration
 Example:
@@ -60,5 +74,9 @@ gitlab:
 
 
 ## Known Issues
+- **Interactive `run` commands are not yet supported.** You can work around this for the time being by 
+running a container with the wrapper non-interactively and then connecting to it without the wrapper using 
+`docker exec`. 
 - Docker [cannot pass newlines in variables via `--env-file`](https://github.com/moby/moby/issues/12997). Therefore 
 multiline GitLab variables with have their line-breaks escaped to \\n.
+
