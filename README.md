@@ -13,12 +13,12 @@ Prerequisites:
 
 Stable releases can be installed via [PyPI](https://pypi.python.org/pypi/dockerwithgitlabsecrets):
 ```bash
-$ pip3 install dockerwithgitlabsecrets
+$ pip install dockerwithgitlabsecrets
 ```
 
 Bleeding edge versions can be installed directly from GitHub:
 ```bash
-$ pip3 install git+https://github.com/wtsi-hgi/docker-with-gitlab-secrets.git@commit_id_or_branch_or_tag#egg=dockerwithgitlabsecrets
+$ pip install git+https://github.com/wtsi-hgi/docker-with-gitlab-secrets.git@commit_id_or_branch_or_tag#egg=dockerwithgitlabsecrets
 ```
 
 
