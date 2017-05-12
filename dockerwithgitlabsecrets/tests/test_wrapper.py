@@ -53,6 +53,11 @@ class TestWrapper(unittest.TestCase):
         self.project_variables_manager = TestWrapper.project_variables_manager
         self.project_name = TestWrapper.project_name
 
+    def test_with_non_supported_action(self):
+        return_code, stdout, stderr = run_wrapped(["version"], self.project_variables_manager)
+        self.assertEquals(0, return_code)
+        self.assertIn("Version", stdout.strip())
+
     def test_has_standard_variable(self):
         return_code, stdout, stderr = run_wrapped(
             ["run", "-e", f"{EXAMPLE_PARAMETER}={EXAMPLE_VALUE}", "alpine", "printenv", EXAMPLE_PARAMETER],
