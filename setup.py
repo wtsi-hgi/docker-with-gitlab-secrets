@@ -12,7 +12,7 @@ setup(
     name="dockerwithgitlabsecrets",
     author="Colin Nolan",
     author_email="colin.nolan@sanger.ac.uk",
-    version="1.0.0",
+    version="0.1.0",
     packages=find_packages(exclude=["tests"]),
     install_requires=open("requirements.txt", "r").readlines(),
     url="https://github.com/wtsi-hgi/docker-with-gitlab-secrets",
