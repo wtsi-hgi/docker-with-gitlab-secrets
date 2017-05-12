@@ -14,7 +14,7 @@ CONFIG_PARAMETER = "dwgs-config"
 PROJECT_PARAMETER = "dwgs-project"
 ENV_FILE_PARAMETER = "env-file"
 
-DEFAULT_CONFIG_FILE = f"{os.path.expanduser('~')}"
+DEFAULT_CONFIG_FILE = f"{os.path.expanduser('~')}/.dwgs-config.yml"
 
 _NAMESPACE_PROJECT_SEPARATOR = "/"
 

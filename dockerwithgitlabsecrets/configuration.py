@@ -1,3 +1,5 @@
+import os
+
 import yaml
 from typing import NamedTuple
 
@@ -30,6 +32,9 @@ def parse_configuration(configuration_file: str) -> Configuration:
     Parses the program configuration in the given file.
     :return: the configuration
     """
+    if not (os.path.isfile(configuration_file) and os.access(configuration_file, os.R_OK)):
+        raise ValueError(f"Cannot read configuration file: {configuration_file}")
+
     with open(configuration_file, "r") as file:
         json_configuration = yaml.load(file)
 

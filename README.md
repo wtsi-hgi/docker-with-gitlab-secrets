@@ -10,6 +10,8 @@ docker-with-gitlab-secrets --dwgs-config /somewhere/dwgs.conf --dwgs-project hgi
 
 Example configuration:
 ```yml
+---
+
 gitlab:
   url: https://gitlab.example.com
   token: my-token
