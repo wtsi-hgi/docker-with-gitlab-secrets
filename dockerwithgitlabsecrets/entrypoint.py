@@ -41,6 +41,9 @@ def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
     :param program_args: the CLI arguments
     :return: the configuration given via the CLI 
     """
+    if len(program_args) == 0:
+        program_args.append("-h")
+
     add_help = len(program_args) == 1 and program_args[0] in ["-h", "--h"]
 
     parser = ArgumentParser(description="Docker With GitLab Secrets", add_help=add_help)
