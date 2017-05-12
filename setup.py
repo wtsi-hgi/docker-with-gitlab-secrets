@@ -9,7 +9,9 @@ except ImportError:
         return open(file, "r").read()
 
 setup(
-    name="docker-with-gitlab-secrets",
+    name="dockerwithgitlabsecrets",
+    author="Colin Nolan",
+    author_email="colin.nolan@sanger.ac.uk",
     version="1.0.0",
     packages=find_packages(exclude=["tests"]),
     install_requires=open("requirements.txt", "r").readlines(),
