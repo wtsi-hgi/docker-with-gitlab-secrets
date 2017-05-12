@@ -1,13 +1,18 @@
 import os
 import subprocess
 from tempfile import NamedTemporaryFile
+from time import sleep
 
 from gitlabbuildvariables.manager import ProjectVariablesManager
-from typing import List, Tuple, Optional
+import logging
+from typing import List, Tuple, Optional, Iterable, Dict
 
 _DOCKER_ENV_FILE_SUFFIX = ".env"
 _DOCKER_BINARY = "docker"
 _SUPPORTED_DOCKER_ACTIONS = ["exec", "run"]
+
+_LINE_BREAK = "\n"
+SAFE_LINE_BREAK = "\\n"
 
 _ENCODING = "utf-8"
 
@@ -15,6 +20,8 @@ StdOutType = str
 StdErrType = str
 ReturnCodeType = int
 ProgramOutputType = Tuple[ReturnCodeType, StdOutType, StdErrType]
+
+_logger = logging.getLogger(__name__)
 
 
 def get_supported_action_index(docker_arguments: List[str]) -> Optional[int]:
@@ -32,6 +39,17 @@ def get_supported_action_index(docker_arguments: List[str]) -> Optional[int]:
         if docker_action_index == len(docker_arguments):
             return None
     return docker_action_index
+
+
+def warn_if_new_lines_in_variables(variables: Dict[str, str]):
+    """
+    TODO
+    :param variables: 
+    :return: 
+    """
+    for key, value in variables.items():
+        if _LINE_BREAK in value:
+            _logger.warning(f"New line characters in variable with key \"{key}\" have been escaped to \\\\n")
 
 
 def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectVariablesManager,
@@ -58,7 +76,9 @@ def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectV
                     env_file.write(other_env_file.read())
 
             variables = project_variables_manager.get()
-            env_variables = os.linesep.join([f"{key}={value}" for key, value in variables.items()])
+            warn_if_new_lines_in_variables(variables)
+            env_variables = os.linesep.join([f"{key}={value.replace(_LINE_BREAK, SAFE_LINE_BREAK)}"
+                                             for key, value in variables.items()])
             env_file.write(env_variables)
             env_file.flush()
 

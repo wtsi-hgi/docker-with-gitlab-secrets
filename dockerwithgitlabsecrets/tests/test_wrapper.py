@@ -7,14 +7,14 @@ from useintest.models import DockerisedServiceWithUsers
 from useintest.predefined.gitlab import GitLab8_16_6_ce_0ServiceController
 from useintest.services.controllers import DockerisedServiceController
 
+from dockerwithgitlabsecrets.entrypoint import CONFIG_PARAMETER
 from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_VALUE, EXAMPLE_PARAMETER
-from dockerwithgitlabsecrets.wrapper import run_wrapped
-
+from dockerwithgitlabsecrets.wrapper import run_wrapped, SAFE_LINE_BREAK
 
 _GITLAB_PORT = 80
 _PROJECT_VARIABLES = {
     "EXAMPLE": "value",
-    "HELLO": "world"
+    "HELLO": "hello\nworld"
 }
 
 
@@ -53,6 +53,11 @@ class TestWrapper(unittest.TestCase):
         self.project_variables_manager = TestWrapper.project_variables_manager
         self.project_name = TestWrapper.project_name
 
+    def test_help_with_docker_command(self):
+        return_code, stdout, stderr = run_wrapped(["ps", "--help"], self.project_variables_manager)
+        self.assertEquals(0, return_code)
+        self.assertIn("Usage:\tdocker ps", stdout.strip())
+
     def test_with_non_supported_action(self):
         return_code, stdout, stderr = run_wrapped(["version"], self.project_variables_manager)
         self.assertEquals(0, return_code)
@@ -60,28 +65,44 @@ class TestWrapper(unittest.TestCase):
 
     def test_has_standard_variable(self):
         return_code, stdout, stderr = run_wrapped(
-            ["run", "-e", f"{EXAMPLE_PARAMETER}={EXAMPLE_VALUE}", "alpine", "printenv", EXAMPLE_PARAMETER],
+            ["run", "-e", f"{EXAMPLE_PARAMETER}={EXAMPLE_VALUE}", "--rm", "alpine", "printenv", EXAMPLE_PARAMETER],
             self.project_variables_manager)
         self.assertEquals(0, return_code)
         self.assertEquals(EXAMPLE_VALUE, stdout.strip())
 
     def test_run_has_secret_variable(self):
         key, value = list(_PROJECT_VARIABLES.items())[0]
-        return_code, stdout, stderr = run_wrapped(["--debug", "run", "alpine", "printenv", key],
+        return_code, stdout, stderr = run_wrapped(["--debug", "run", "--rm", "alpine", "printenv", key],
                                                   self.project_variables_manager)
         self.assertEquals(0, return_code)
         self.assertEquals(value, stdout.strip())
 
+    def test_run_has_multiline_secret_variable(self):
+        key, value = list(_PROJECT_VARIABLES.items())[1]
+        return_code, stdout, stderr = run_wrapped(["run", "--rm", "alpine", "printenv", key],
+                                                  self.project_variables_manager)
+        self.assertEquals(0, return_code)
+        self.assertEquals(value.replace("\n", SAFE_LINE_BREAK), stdout.strip())
+
     def test_run_cli_variable_has_higher_precedence(self):
         other_value = "other-value"
         key, value = list(_PROJECT_VARIABLES.items())[0]
-        return_code, stdout, stderr = run_wrapped(["run", "-e", f"{key}={other_value}", "alpine", "printenv", key],
-                                                  self.project_variables_manager)
+        return_code, stdout, stderr = run_wrapped(["run", "-e", f"{key}={other_value}", "--rm", "alpine", "printenv",
+                                                   key], self.project_variables_manager)
         self.assertEquals(0, return_code)
         self.assertEquals(other_value, stdout.strip())
 
     # TODO: Test execute
     # TODO: Test with --env-file
+
+
+# TODO: Tests for run
+    # def test_help(self):
+    #     return_code, stdout, stderr = run_wrapped(["--help"], self.project_variables_manager)
+    #     self.assertEquals(0, return_code)
+    #     self.assertIn(CONFIG_PARAMETER, stdout.strip())
+
+
 
 
 if __name__ == "__main__":
