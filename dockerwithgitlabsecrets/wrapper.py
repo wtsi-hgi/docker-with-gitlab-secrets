@@ -23,6 +23,9 @@ def get_supported_action_index(docker_arguments: List[str]) -> Optional[int]:
     :param docker_arguments: 
     :return: 
     """
+    if len(docker_arguments) == 0:
+        return None
+
     docker_action_index = 0
     while docker_arguments[docker_action_index] not in _SUPPORTED_DOCKER_ACTIONS:
         docker_action_index += 1
