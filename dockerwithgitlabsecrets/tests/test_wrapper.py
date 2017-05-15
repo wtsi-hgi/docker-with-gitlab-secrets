@@ -1,3 +1,4 @@
+from tempfile import NamedTemporaryFile
 import unittest
 
 from dockerwithgitlabsecrets.tests._common import EXAMPLE_VALUE, EXAMPLE_PARAMETER
@@ -52,10 +53,27 @@ class TestWrapper(unittest.TestCase):
         self.assertEquals(0, return_code)
         self.assertEquals(other_value, stdout.strip())
 
-    # TODO: Test execute
-    # TODO: Test with --env-file
+    def test_run_with_env_file(self):
+        key, value = list(_PROJECT_VARIABLES.items())[0]
+        with NamedTemporaryFile("w") as env_file:
+            env_file.write("other=value")
+            env_file.flush()
+            return_code, stdout, stderr = run_wrapped(
+                ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], {key: value})
+            self.assertEquals(0, return_code)
+            self.assertEquals(value, stdout.strip())
 
+    def test_run_with_env_file_that_overrides(self):
+        key, value = list(_PROJECT_VARIABLES.items())[0]
+        example_override = "override"
 
+        with NamedTemporaryFile("w") as env_file:
+            env_file.write(f"{key}={example_override}")
+            env_file.flush()
+            return_code, stdout, stderr = run_wrapped(
+                ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], _PROJECT_VARIABLES)
+            self.assertEquals(0, return_code)
+            self.assertEquals(example_override, stdout.strip())
 
 
 if __name__ == "__main__":
