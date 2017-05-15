@@ -57,6 +57,12 @@ docker-with-gitlab-secrets --dwgs-config my-config.yml \
     version
 ```
 
+Run a container interactively that will have secrets from a GitLab project in the environment:
+```bash
+docker-with-gitlab-secrets --dwgs-config my-config.yml --dwgs-project my-project \
+    run --rm -it ubuntu
+```
+
 
 ## Configuration
 Example:
