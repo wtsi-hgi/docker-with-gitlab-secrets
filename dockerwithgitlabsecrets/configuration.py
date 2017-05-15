@@ -22,20 +22,21 @@ class GitLabConfiguration(NamedTuple):
 
 class Configuration(NamedTuple):
     """
-    Program configuraiton.
+    Program configuration.
     """
     gitlab: GitLabConfiguration
 
 
-def parse_configuration(configuration_file: str) -> Configuration:
+def parse_configuration(configuration_location: str) -> Configuration:
     """
     Parses the program configuration in the given file.
+    :param configuration_location: the location of the configuration file to load and parse
     :return: the configuration
     """
-    if not (os.path.isfile(configuration_file) and os.access(configuration_file, os.R_OK)):
-        raise ValueError(f"Cannot read configuration file: {configuration_file}")
+    if not (os.path.isfile(configuration_location) and os.access(configuration_location, os.R_OK)):
+        raise ValueError(f"Cannot read configuration file: {configuration_location}")
 
-    with open(configuration_file, "r") as file:
+    with open(configuration_location, "r") as file:
         json_configuration = yaml.load(file)
 
     project = json_configuration[GITLAB_PROPERTY][GITLAB_PROJECT_PROPERTY] \

@@ -3,8 +3,6 @@ import os
 import subprocess
 from tempfile import NamedTemporaryFile
 
-import sys
-from gitlabbuildvariables.manager import ProjectVariablesManager
 from typing import List, Tuple, Optional, Dict
 
 _DOCKER_ENV_FILE_SUFFIX = ".env"
@@ -26,7 +24,7 @@ _logger = logging.getLogger(__name__)
 
 def get_supported_action_index(docker_arguments: List[str]) -> Optional[int]:
     """
-    TODO
+    Gets the index of the action to which 
     :param docker_arguments: 
     :return: 
     """
@@ -43,24 +41,23 @@ def get_supported_action_index(docker_arguments: List[str]) -> Optional[int]:
 
 def warn_if_new_lines_in_variables(variables: Dict[str, str]):
     """
-    TODO
-    :param variables: 
-    :return: 
+    Emits a warning to the logger if one of the given key/value variables contains new line characters in its output.
+    :param variables: the variables
     """
     for key, value in variables.items():
         if _LINE_BREAK in value:
             _logger.warning(f"New line characters in variable with key \"{key}\" have been escaped to \\\\n")
 
 
-def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectVariablesManager,
+def run_wrapped(docker_arguments: List[str], variables: Dict[str, str],
                 env_file_location: str=None, interactive: bool=False) -> ProgramOutputType:
     """
-    TODO
-    :param docker_arguments: 
-    :param project_variables_manager: 
-    :param env_file_location: 
-    :param interactive:
-    :return: 
+    Runs Docker with the given arguments with the given variables set in the envrionment.
+    :param docker_arguments: the arguments to pass to Dcoker
+    :param variables: the variables to set in the environment
+    :param env_file_location: the location of any required environment file
+    :param interactive: whether the wrapped Docker run should be interactive
+    :return: the output of running Docker
     """
     docker_action_index = get_supported_action_index(docker_arguments)
     docker_call = [_DOCKER_BINARY]
@@ -77,7 +74,6 @@ def run_wrapped(docker_arguments: List[str], project_variables_manager: ProjectV
                 with open(env_file_location, "r") as other_env_file:
                     env_file.write(other_env_file.read())
 
-            variables = project_variables_manager.get()
             warn_if_new_lines_in_variables(variables)
             env_variables = os.linesep.join([f"{key}={value.replace(_LINE_BREAK, SAFE_LINE_BREAK)}"
                                              for key, value in variables.items()])

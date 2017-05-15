@@ -1,4 +1,8 @@
 # Change Log
+## [Unreleased]
+### Changed
+- Prints help if no arguments are given.
+
 ## 1.0.0 - 2017-05-12
 ### Added
 - Ability to run Docker interactively.

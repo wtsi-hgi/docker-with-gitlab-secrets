@@ -28,17 +28,64 @@ class TestParseCliArguments(unittest.TestCase):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT] \
                     + EXAMPLE_DOCKER_ARGS
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
-                                    docker_args=EXAMPLE_DOCKER_ARGS)
+                                    docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
         self.assertEquals(expected, parse_cli_arguments(arguments))
 
     def test_parse_program_arguments_with_env_docker_argument(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT,
                      _ENV_FILE_PARAMETER_FLAG, EXAMPLE_LOCATION_2] + EXAMPLE_DOCKER_ARGS
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
-                                    env_file=EXAMPLE_LOCATION_2, docker_args=EXAMPLE_DOCKER_ARGS)
+                                    env_file=EXAMPLE_LOCATION_2, docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
         configuration = parse_cli_arguments(arguments)
         self.assertEquals(expected, configuration)
         self.assertNotIn(ENV_FILE_PARAMETER, configuration.docker_args)
+
+
+
+
+
+# class TestWrapper(unittest.TestCase):
+#     """
+#     Tests for `run_wrapped`.
+#     """
+#     _gitlab_service: DockerisedServiceWithUsers
+#     _gitlab_controller: DockerisedServiceController
+#     project_variables_manager: ProjectVariablesManager
+#     project_name: str
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         cls._gitlab_controller = GitLab8_16_6_ce_0ServiceController()
+#         cls._gitlab_service = cls._gitlab_controller.start_service()
+#         gitlab_location = f"http://{cls._gitlab_service.host}:{cls._gitlab_service.ports[_GITLAB_PORT]}"
+#
+#         gitlab = Gitlab(url=gitlab_location, email=cls._gitlab_service.root_user.username,
+#                         password=cls._gitlab_service.root_user.password)
+#         gitlab.auth()
+#
+#         cls._gitlab_token = gitlab.private_token
+#         cls.project_name = f"{cls._gitlab_service.root_user.username}/{EXAMPLE_PROJECT}"
+#         gitlab.projects.create({"name": EXAMPLE_PROJECT})
+#
+#         cls.project_variables_manager = ProjectVariablesManager(
+#             GitLabConfig(gitlab_location, cls._gitlab_token), cls.project_name)
+#         cls.project_variables_manager.set(_PROJECT_VARIABLES)
+#
+#     @classmethod
+#     def tearDownClass(cls):
+#         cls._gitlab_controller.stop_service(cls._gitlab_service)
+#
+#     def setUp(self):
+#         self.project_variables_manager = TestWrapper.project_variables_manager
+#         self.project_name = TestWrapper.project_name
+
+
+# TODO: Tests for run
+    # def test_help(self):
+    #     return_code, stdout, stderr = run_wrapped(["--help"], _PROJECT_VARIABLES)
+    #     self.assertEquals(0, return_code)
+    #     self.assertIn(CONFIG_PARAMETER, stdout.strip())
+
 
 
 if __name__ == '__main__':

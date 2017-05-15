@@ -34,9 +34,9 @@ class CliConfiguration(NamedTuple):
 
 def _is_interactive(docker_arguments: List[str]) -> bool:
     """
-    TODO
-    :param docker_arguments: 
-    :return: 
+    Detects whether Docker is to be ran interactively based on the given arguments.
+    :param docker_arguments: the arguments given to Docker
+    :return: whether Docker is to be ran interactively 
     """
     supported_action_index = get_supported_action_index(docker_arguments)
     if supported_action_index is None:
@@ -92,8 +92,9 @@ def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
 
     gitlab_config = GitLabConfig(configuration.gitlab.url, configuration.gitlab.token)
     project_variables_manager = ProjectVariablesManager(gitlab_config, project)
+    project_variables = project_variables_manager.get()
 
-    return run_wrapped(cli_configuration.docker_args, project_variables_manager, cli_configuration.env_file,
+    return run_wrapped(cli_configuration.docker_args, project_variables, cli_configuration.env_file,
                        cli_configuration.interactive)
 
 
