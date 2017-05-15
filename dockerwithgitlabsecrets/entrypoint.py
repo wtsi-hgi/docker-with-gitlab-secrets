@@ -103,8 +103,10 @@ def main():
     """
     cli_configuration = parse_cli_arguments(sys.argv[1:])
     returncode, stdout, stderr = run(cli_configuration)
-    sys.stdout.write(stderr)
-    sys.stderr.write(stdout)
+    if stderr is not None:
+        sys.stdout.write(stderr)
+    if stderr is not None:
+        sys.stderr.write(stderr)
     exit(returncode)
 
 
