@@ -1,7 +1,7 @@
 import unittest
 
 from dockerwithgitlabsecrets.entrypoint import CliConfiguration, parse_cli_arguments, CONFIG_PARAMETER, \
-    PROJECT_PARAMETER, ENV_FILE_PARAMETER
+    PROJECT_PARAMETER, ENV_FILE_PARAMETER, is_interactive
 from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_LOCATION, EXAMPLE_LOCATION_2, \
     EXAMPLE_DOCKER_ARGS
 
@@ -41,10 +41,26 @@ class TestParseCliArguments(unittest.TestCase):
         self.assertNotIn(ENV_FILE_PARAMETER, configuration.docker_args)
 
 
+class TestIsInteractive(unittest.TestCase):
+    """
+    Tests for `parse_cli_arguments`.
+    """
+    def test_without_flag(self):
+        self.assertFalse(is_interactive(["run", "--rm", "ubuntu", "command"]))
+
+    def test_with_interactive_flag(self):
+        self.assertTrue(is_interactive(["run", "-t", "ubuntu"]))
+
+    def test_with_interactive_flag_and_stdin_attach(self):
+        self.assertTrue(is_interactive(["run", "-it", "ubuntu"]))
+
+    def test_with_interactive_flag_and_stdin_attach_reversed(self):
+        self.assertTrue(is_interactive(["run", "-ti", "ubuntu"]))
 
 
 
-# class TestWrapper(unittest.TestCase):
+
+# class TestRun(unittest.TestCase):
 #     """
 #     Tests for `run_wrapped`.
 #     """

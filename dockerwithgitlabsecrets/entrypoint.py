@@ -32,9 +32,14 @@ class CliConfiguration(NamedTuple):
     interactive: bool = False
 
 
-def _is_interactive(docker_arguments: List[str]) -> bool:
+def is_interactive(docker_arguments: List[str]) -> bool:
     """
     Detects whether Docker is to be ran interactively based on the given arguments.
+    
+    Note: will incorrectly classify as interactive if the command has a `-t` flag, e.g.
+    ["run", "--rm", "ubuntu", "command", "-i", "-it", "-ti"]
+    Without creating a parser for all Docker commands, it is not possible to get around this issue. However, running a
+    non-interactive command interactively should not cause any issues.
     :param docker_arguments: the arguments given to Docker
     :return: whether Docker is to be ran interactively 
     """
@@ -73,7 +78,7 @@ def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
 
     return CliConfiguration(
         config_location=parsed_program_args[CONFIG_PARAMETER], project=parsed_program_args[PROJECT_PARAMETER],
-        env_file=parsed_program_args[ENV_FILE_PARAMETER], interactive=_is_interactive(parsed_docker_args),
+        env_file=parsed_program_args[ENV_FILE_PARAMETER], interactive=is_interactive(parsed_docker_args),
         docker_args=parsed_docker_args)
 
 
