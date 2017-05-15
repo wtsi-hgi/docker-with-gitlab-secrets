@@ -79,6 +79,7 @@ def run_wrapped(docker_arguments: List[str], variables: Dict[str, str], interact
                            + docker_arguments[docker_action_index+1:]
 
             if interactive:
+                _logger.info("Running Docker in interactive mode")
                 returncode = os.WEXITSTATUS(os.system(" ".join(docker_call)))
                 return returncode, None, None
             else:
