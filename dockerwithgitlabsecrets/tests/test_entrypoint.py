@@ -14,13 +14,12 @@ from useintest.services.controllers import DockerisedServiceController
 from dockerwithgitlabsecrets.configuration import GITLAB_URL_PROPERTY, GITLAB_PROPERTY, GITLAB_TOKEN_PROPERTY, \
     GITLAB_PROJECT_PROPERTY, GITLAB_NAMESPACE_PROPERTY
 from dockerwithgitlabsecrets.entrypoint import CliConfiguration, parse_cli_arguments, CONFIG_PARAMETER, \
-    PROJECT_PARAMETER, ENV_FILE_PARAMETER, is_interactive, run
-from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_LOCATION, EXAMPLE_LOCATION_2, \
-    EXAMPLE_DOCKER_ARGS, EXAMPLE_VARIABLES
+    PROJECT_PARAMETER, is_interactive, run
+from dockerwithgitlabsecrets.tests._common import EXAMPLE_PROJECT, EXAMPLE_LOCATION, EXAMPLE_DOCKER_ARGS, \
+    EXAMPLE_VARIABLES
 
 _CONFIG_PARAMETER_FLAG = f"--{CONFIG_PARAMETER}"
 _PROJECT_PARAMETER_FLAG = f"--{PROJECT_PARAMETER}"
-_ENV_FILE_PARAMETER_FLAG = f"--{ENV_FILE_PARAMETER}"
 
 _GITLAB_PORT = 80
 
@@ -29,8 +28,11 @@ class TestParseCliArguments(unittest.TestCase):
     """
     Tests for `parse_cli_arguments`.
     """
-    def test_parse_help_if_no_arguments(self):
-        self.assertIn("usage: docker-with-gitlab-secrets", parse_cli_arguments([]))
+    def test_parse_no_arguments(self):
+        with self.assertRaises(SystemExit) as context:
+            parse_cli_arguments([])
+        # TODO: Capture stderr and check for help
+        self.assertEqual(0, context.exception.code)
 
     def test_parse_only_config_location_argument(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION]
@@ -48,15 +50,6 @@ class TestParseCliArguments(unittest.TestCase):
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
                                     docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
         self.assertEqual(expected, parse_cli_arguments(arguments))
-
-    def test_parse_program_arguments_with_env_docker_argument(self):
-        arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT,
-                     _ENV_FILE_PARAMETER_FLAG, EXAMPLE_LOCATION_2] + EXAMPLE_DOCKER_ARGS
-        expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
-                                    env_file=EXAMPLE_LOCATION_2, docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
-        configuration = parse_cli_arguments(arguments)
-        self.assertEqual(expected, configuration)
-        self.assertNotIn(ENV_FILE_PARAMETER, configuration.docker_args)
 
 
 class TestIsInteractive(unittest.TestCase):

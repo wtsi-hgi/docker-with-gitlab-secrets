@@ -12,7 +12,6 @@ from dockerwithgitlabsecrets.wrapper import run_wrapped, ProgramOutputType, get_
 
 CONFIG_PARAMETER = "dwgs-config"
 PROJECT_PARAMETER = "dwgs-project"
-ENV_FILE_PARAMETER = "env-file"
 TTY_PARAMETER = "t"
 STDIN_OPEN_PARAMETER = "i"
 
@@ -28,7 +27,6 @@ class CliConfiguration(NamedTuple):
     docker_args: List[str] = []
     config_location: str = None
     project: str = None
-    env_file: str = None
     interactive: bool = False
 
 
@@ -70,16 +68,13 @@ def parse_cli_arguments(program_args: List[str]) -> CliConfiguration:
         help="GitLab project (if not namespaced in the form \"namespace/project\", the default namespace defined in "
              "the configuration file will be used). If not defined, the default project in the configuration file will "
              "be used")
-    parser.add_argument(f"--{ENV_FILE_PARAMETER}", type=str,
-                        help="Docker argument in which this program wants to know about - see: https://docs.docker.com/engine/reference/commandline/run/ for more information")
 
     parsed_program_args, parsed_docker_args = parser.parse_known_args(program_args)
     parsed_program_args = {key.replace("_", "-"):value for key, value in vars(parsed_program_args).items()}
 
     return CliConfiguration(
         config_location=parsed_program_args[CONFIG_PARAMETER], project=parsed_program_args[PROJECT_PARAMETER],
-        env_file=parsed_program_args[ENV_FILE_PARAMETER], interactive=is_interactive(parsed_docker_args),
-        docker_args=parsed_docker_args)
+        interactive=is_interactive(parsed_docker_args), docker_args=parsed_docker_args)
 
 
 def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
@@ -99,8 +94,7 @@ def run(cli_configuration: CliConfiguration) -> ProgramOutputType:
     project_variables_manager = ProjectVariablesManager(gitlab_config, project)
     project_variables = project_variables_manager.get()
 
-    return run_wrapped(cli_configuration.docker_args, project_variables, cli_configuration.env_file,
-                       cli_configuration.interactive)
+    return run_wrapped(cli_configuration.docker_args, project_variables, cli_configuration.interactive)
 
 
 def main():

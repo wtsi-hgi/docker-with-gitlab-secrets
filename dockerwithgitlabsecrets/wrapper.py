@@ -5,6 +5,7 @@ from tempfile import NamedTemporaryFile
 
 from typing import List, Tuple, Optional, Dict
 
+_DOCKER_ENV_FILE_PARAMETER = "env-file"
 _DOCKER_ENV_FILE_SUFFIX = ".env"
 _DOCKER_BINARY = "docker"
 _SUPPORTED_DOCKER_ACTIONS = ["run"]
@@ -49,13 +50,11 @@ def warn_if_new_lines_in_variables(variables: Dict[str, str]):
             _logger.warning(f"New line characters in variable with key \"{key}\" have been escaped to \\\\n")
 
 
-def run_wrapped(docker_arguments: List[str], variables: Dict[str, str],
-                env_file_location: str=None, interactive: bool=False) -> ProgramOutputType:
+def run_wrapped(docker_arguments: List[str], variables: Dict[str, str], interactive: bool=False) -> ProgramOutputType:
     """
     Runs Docker with the given arguments with the given variables set in the envrionment.
     :param docker_arguments: the arguments to pass to Dcoker
     :param variables: the variables to set in the environment
-    :param env_file_location: the location of any required environment file
     :param interactive: whether the wrapped Docker run should be interactive
     :return: the output of running Docker
     """
@@ -63,25 +62,20 @@ def run_wrapped(docker_arguments: List[str], variables: Dict[str, str],
     docker_call = [_DOCKER_BINARY]
 
     if docker_action_index is None:
-        assert env_file_location is None
         docker_call += docker_arguments
         process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = process.communicate()
         returncode = process.returncode
     else:
         with NamedTemporaryFile(suffix=_DOCKER_ENV_FILE_SUFFIX, mode="w") as env_file:
-            if env_file_location is not None:
-                with open(env_file_location, "r") as other_env_file:
-                    env_file.write(other_env_file.read())
-
             warn_if_new_lines_in_variables(variables)
             env_variables = os.linesep.join([f"{key}={value.replace(_LINE_BREAK, SAFE_LINE_BREAK)}"
                                              for key, value in variables.items()])
             env_file.write(env_variables)
             env_file.flush()
 
-            from dockerwithgitlabsecrets.entrypoint import ENV_FILE_PARAMETER
-            docker_call += docker_arguments[0:docker_action_index+1] + [f"--{ENV_FILE_PARAMETER}", env_file.name] \
+            docker_call += docker_arguments[0:docker_action_index+1] + \
+                           [f"--{_DOCKER_ENV_FILE_PARAMETER}", env_file.name] \
                            + docker_arguments[docker_action_index+1:]
 
             if interactive:

@@ -9,5 +9,6 @@ EXAMPLE_PARAMETER = "MY_SECRET"
 EXAMPLE_VALUE="secret123"
 EXAMPLE_VARIABLES = {
     "EXAMPLE": "value",
-    "HELLO": "hello\nworld"
+    "HELLO": "hello\nworld",
+    "OTHER": "thing"
 }

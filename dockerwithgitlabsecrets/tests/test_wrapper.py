@@ -50,7 +50,7 @@ class TestWrapper(unittest.TestCase):
 
     def test_run_with_env_file(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
-        key_2, value_2 = list(EXAMPLE_VARIABLES.items())[1]
+        key_2, value_2 = list(EXAMPLE_VARIABLES.items())[2]
         example_override = "override"
 
         with NamedTemporaryFile("w") as env_file:
@@ -68,8 +68,7 @@ class TestWrapper(unittest.TestCase):
 
     def test_run_in_interactive_mode(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
-        return_code, stdout, stderr = run_wrapped(["--debug", "run", "--rm", "-it", "alpine", "printenv", key],
-                                                  EXAMPLE_VARIABLES)
+        return_code, stdout, stderr = run_wrapped(["run", "--rm", "-t", "alpine", "printenv", key], EXAMPLE_VARIABLES)
         self.assertEqual(0, return_code)
         self.assertEqual(value, stdout.strip())
 
