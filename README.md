@@ -35,17 +35,13 @@ optional arguments:
   -h, --help            show this help message and exit
   --dwgs-config DWGS_CONFIG
                         location of the configuration file (will default to
-                        /root/.dwgs-config.yml)
+                        /Users/cn13/.dwgs-config.yml)
   --dwgs-project DWGS_PROJECT
                         GitLab project (if not namespaced in the form
                         "namespace/project", the default namespace defined in
                         the configuration file will be used). If not defined,
                         the default project in the configuration file will be
                         used
-  --env-file ENV_FILE   Docker argument in which this program wants to know
-                        about - see: https://docs.docker.com/engine/reference/
-                        commandline/run/#set-environment-variables--e---env---
-                        env-file
 ```
 
 ### Examples
@@ -76,4 +72,3 @@ gitlab:
 ## Known Issues
 - Docker [cannot pass newlines in variables via `--env-file`](https://github.com/moby/moby/issues/12997). Therefore 
 multiline GitLab variables with have their line-breaks escaped to \\n.
-

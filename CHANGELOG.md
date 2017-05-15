@@ -1,7 +1,9 @@
 # Change Log
-## [Unreleased]
+## 2.0.0 - 2017-05-15
 ### Changed
 - Prints help if no arguments are given.
+- Moves the responsibility of getting variables from GitLab away from the wrapper (changes signature of `run_wrapped`).
+- Removes merging of `--env-file` as Docker supports multiple `env-file` arguments. 
 
 ## 1.0.0 - 2017-05-12
 ### Added
