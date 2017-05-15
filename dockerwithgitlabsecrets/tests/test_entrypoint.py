@@ -1,4 +1,5 @@
 import os
+import re
 import unittest
 from tempfile import mkstemp
 
@@ -123,7 +124,7 @@ class TestRun(unittest.TestCase):
         cli_configuration = CliConfiguration(docker_args=["--help"], config_location=self.configuration_location)
         return_code, stdout, stderr = run(cli_configuration)
         self.assertEqual(0, return_code)
-        self.assertIn("Usage:\tdocker", stdout.strip())
+        self.assertTrue(re.match("Usage:\sdocker", stdout.strip()))
 
     def test_run(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
