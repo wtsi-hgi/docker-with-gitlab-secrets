@@ -7,3 +7,7 @@ EXAMPLE_TOKEN = "my-token"
 EXAMPLE_DOCKER_ARGS = ["run", "-e", "test", "-v", EXAMPLE_LOCATION, "-it", "--rm", "--no-healthcheck", "ubuntu", "bash"]
 EXAMPLE_PARAMETER = "MY_SECRET"
 EXAMPLE_VALUE="secret123"
+EXAMPLE_VARIABLES = {
+    "EXAMPLE": "value",
+    "HELLO": "hello\nworld"
+}
