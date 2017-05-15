@@ -19,6 +19,7 @@ install:
 script:
   - PYTHONPATH=. coverage run -m unittest discover -v -s dockerwithgitlabsecrets/tests
   - coverage run setup.py install
+  - docker-with-gitlab-secrets -h
   - coverage combine -a
   - coverage report
 
