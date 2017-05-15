@@ -11,42 +11,42 @@ class TestWrapper(unittest.TestCase):
     """
     def test_help_with_docker_command(self):
         return_code, stdout, stderr = run_wrapped(["ps", "--help"], EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
+        self.assertEqual(0, return_code)
         self.assertIn("Usage:\tdocker ps", stdout.strip())
 
     def test_with_non_supported_action(self):
         return_code, stdout, stderr = run_wrapped(["version"], EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
+        self.assertEqual(0, return_code)
         self.assertIn("Version", stdout.strip())
 
     def test_has_standard_variable(self):
         return_code, stdout, stderr = run_wrapped(
             ["run", "-e", f"{EXAMPLE_PARAMETER}={EXAMPLE_VALUE}", "--rm", "alpine", "printenv", EXAMPLE_PARAMETER],
             EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
-        self.assertEquals(EXAMPLE_VALUE, stdout.strip())
+        self.assertEqual(0, return_code)
+        self.assertEqual(EXAMPLE_VALUE, stdout.strip())
 
     def test_run_has_secret_variable(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
         return_code, stdout, stderr = run_wrapped(["--debug", "run", "--rm", "alpine", "printenv", key],
                                                   EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
-        self.assertEquals(value, stdout.strip())
+        self.assertEqual(0, return_code)
+        self.assertEqual(value, stdout.strip())
 
     def test_run_has_multiline_secret_variable(self):
         key, value = list(EXAMPLE_VARIABLES.items())[1]
         return_code, stdout, stderr = run_wrapped(["run", "--rm", "alpine", "printenv", key],
                                                   EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
-        self.assertEquals(value.replace("\n", SAFE_LINE_BREAK), stdout.strip())
+        self.assertEqual(0, return_code)
+        self.assertEqual(value.replace("\n", SAFE_LINE_BREAK), stdout.strip())
 
     def test_run_cli_variable_has_higher_precedence(self):
         other_value = "other-value"
         key, value = list(EXAMPLE_VARIABLES.items())[0]
         return_code, stdout, stderr = run_wrapped(["run", "-e", f"{key}={other_value}", "--rm", "alpine", "printenv",
                                                    key], EXAMPLE_VARIABLES)
-        self.assertEquals(0, return_code)
-        self.assertEquals(other_value, stdout.strip())
+        self.assertEqual(0, return_code)
+        self.assertEqual(other_value, stdout.strip())
 
     def test_run_with_env_file(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
@@ -55,8 +55,8 @@ class TestWrapper(unittest.TestCase):
             env_file.flush()
             return_code, stdout, stderr = run_wrapped(
                 ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], {key: value})
-            self.assertEquals(0, return_code)
-            self.assertEquals(value, stdout.strip())
+            self.assertEqual(0, return_code)
+            self.assertEqual(value, stdout.strip())
 
     def test_run_with_env_file_that_overrides(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
@@ -67,8 +67,8 @@ class TestWrapper(unittest.TestCase):
             env_file.flush()
             return_code, stdout, stderr = run_wrapped(
                 ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], EXAMPLE_VARIABLES)
-            self.assertEquals(0, return_code)
-            self.assertEquals(example_override, stdout.strip())
+            self.assertEqual(0, return_code)
+            self.assertEqual(example_override, stdout.strip())
 
 
 if __name__ == "__main__":

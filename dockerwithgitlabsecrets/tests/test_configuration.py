@@ -28,7 +28,7 @@ class TestParseConfiguration(unittest.TestCase):
             }
         })
         expected = Configuration(GitLabConfiguration(url=EXAMPLE_URL, token=EXAMPLE_TOKEN))
-        self.assertEquals(expected, parse_configuration(self._temp_file_location))
+        self.assertEqual(expected, parse_configuration(self._temp_file_location))
 
     def test_parse_full_configuration(self):
         self._json_to_temp_file({
@@ -41,7 +41,7 @@ class TestParseConfiguration(unittest.TestCase):
         })
         expected = Configuration(GitLabConfiguration(
             url=EXAMPLE_URL, token=EXAMPLE_TOKEN, project=EXAMPLE_PROJECT, namespace=EXAMPLE_NAMESPACE))
-        self.assertEquals(expected, parse_configuration(self._temp_file_location))
+        self.assertEqual(expected, parse_configuration(self._temp_file_location))
 
     def _json_to_temp_file(self, json: Dict):
         """

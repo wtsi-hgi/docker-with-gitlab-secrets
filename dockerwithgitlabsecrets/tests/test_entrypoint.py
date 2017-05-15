@@ -31,19 +31,19 @@ class TestParseCliArguments(unittest.TestCase):
     def test_parse_only_config_location_argument(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION]
         expected = CliConfiguration(config_location=EXAMPLE_LOCATION)
-        self.assertEquals(expected, parse_cli_arguments(arguments))
+        self.assertEqual(expected, parse_cli_arguments(arguments))
 
     def test_parse_only_project_argument(self):
         arguments = [_PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT]
         expected = CliConfiguration(project=EXAMPLE_PROJECT)
-        self.assertEquals(expected, parse_cli_arguments(arguments))
+        self.assertEqual(expected, parse_cli_arguments(arguments))
 
     def test_parse_program_arguments_with_docker_arguments(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT] \
                     + EXAMPLE_DOCKER_ARGS
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
                                     docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
-        self.assertEquals(expected, parse_cli_arguments(arguments))
+        self.assertEqual(expected, parse_cli_arguments(arguments))
 
     def test_parse_program_arguments_with_env_docker_argument(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION, _PROJECT_PARAMETER_FLAG, EXAMPLE_PROJECT,
@@ -51,7 +51,7 @@ class TestParseCliArguments(unittest.TestCase):
         expected = CliConfiguration(project=EXAMPLE_PROJECT, config_location=EXAMPLE_LOCATION,
                                     env_file=EXAMPLE_LOCATION_2, docker_args=EXAMPLE_DOCKER_ARGS, interactive=True)
         configuration = parse_cli_arguments(arguments)
-        self.assertEquals(expected, configuration)
+        self.assertEqual(expected, configuration)
         self.assertNotIn(ENV_FILE_PARAMETER, configuration.docker_args)
 
 
@@ -122,8 +122,8 @@ class TestRun(unittest.TestCase):
     def test_help(self):
         cli_configuration = CliConfiguration(docker_args=["--help"], config_location=self.configuration_location)
         return_code, stdout, stderr = run(cli_configuration)
-        self.assertEquals(0, return_code)
-        self.assertIn("Usage:\tdocker COMMAND", stdout.strip())
+        self.assertEqual(0, return_code)
+        self.assertIn("Usage:\tdocker", stdout.strip())
 
     def test_run(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
@@ -131,7 +131,7 @@ class TestRun(unittest.TestCase):
                                              config_location=self.configuration_location,
                                              project=TestRun.project_name.split("/")[1])
         return_code, stdout, stderr = run(cli_configuration)
-        self.assertEquals(0, return_code)
+        self.assertEqual(0, return_code)
         self.assertIn(value, stdout.strip())
 
 
