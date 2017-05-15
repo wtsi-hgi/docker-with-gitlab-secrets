@@ -68,9 +68,9 @@ class TestWrapper(unittest.TestCase):
 
     def test_run_in_interactive_mode(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
-        return_code, stdout, stderr = run_wrapped(["run", "--rm", "-t", "alpine", "printenv", key], EXAMPLE_VARIABLES)
+        return_code, stdout, stderr = run_wrapped(["run", "--rm", "-t", "alpine", "printenv", key], EXAMPLE_VARIABLES,
+                                                  interactive=True)
         self.assertEqual(0, return_code)
-        self.assertEqual(value, stdout.strip())
 
 
 if __name__ == "__main__":

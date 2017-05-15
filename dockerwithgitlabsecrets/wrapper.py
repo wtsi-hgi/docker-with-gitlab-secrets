@@ -18,7 +18,7 @@ _ENCODING = "utf-8"
 StdOutType = str
 StdErrType = str
 ReturnCodeType = int
-ProgramOutputType = Tuple[ReturnCodeType, StdOutType, StdErrType]
+ProgramOutputType = Tuple[ReturnCodeType, Optional[StdOutType], Optional[StdErrType]]
 
 _logger = logging.getLogger(__name__)
 
@@ -80,7 +80,7 @@ def run_wrapped(docker_arguments: List[str], variables: Dict[str, str], interact
 
             if interactive:
                 returncode = os.WEXITSTATUS(os.system(" ".join(docker_call)))
-                return returncode, "", ""
+                return returncode, None, None
             else:
                 process = subprocess.Popen(docker_call, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 stdout, stderr = process.communicate()
