@@ -50,16 +50,7 @@ class TestWrapper(unittest.TestCase):
 
     def test_run_with_env_file(self):
         key, value = list(EXAMPLE_VARIABLES.items())[0]
-        with NamedTemporaryFile("w") as env_file:
-            env_file.write("other=value")
-            env_file.flush()
-            return_code, stdout, stderr = run_wrapped(
-                ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], {key: value})
-            self.assertEqual(0, return_code)
-            self.assertEqual(value, stdout.strip())
-
-    def test_run_with_env_file_that_overrides(self):
-        key, value = list(EXAMPLE_VARIABLES.items())[0]
+        key_2, value_2 = list(EXAMPLE_VARIABLES.items())[1]
         example_override = "override"
 
         with NamedTemporaryFile("w") as env_file:
@@ -69,6 +60,18 @@ class TestWrapper(unittest.TestCase):
                 ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key], EXAMPLE_VARIABLES)
             self.assertEqual(0, return_code)
             self.assertEqual(example_override, stdout.strip())
+
+            return_code, stdout, stderr = run_wrapped(
+                ["run", "--env-file", f"{env_file.name}", "--rm", "alpine", "printenv", key_2], EXAMPLE_VARIABLES)
+            self.assertEqual(0, return_code)
+            self.assertEqual(value_2, stdout.strip())
+
+    def test_run_in_interactive_mode(self):
+        key, value = list(EXAMPLE_VARIABLES.items())[0]
+        return_code, stdout, stderr = run_wrapped(["--debug", "run", "--rm", "-it", "alpine", "printenv", key],
+                                                  EXAMPLE_VARIABLES)
+        self.assertEqual(0, return_code)
+        self.assertEqual(value, stdout.strip())
 
 
 if __name__ == "__main__":

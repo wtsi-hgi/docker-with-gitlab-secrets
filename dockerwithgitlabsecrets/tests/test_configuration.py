@@ -20,6 +20,9 @@ class TestParseConfiguration(unittest.TestCase):
     def tearDown(self):
         os.remove(self._temp_file_location)
 
+    def test_parse_non_existent_configuration(self):
+        self.assertRaises(ValueError, parse_configuration, f"{self._temp_file_location}_does_not_exist")
+
     def test_parse_minimal_configuration(self):
         self._json_to_temp_file({
             GITLAB_PROPERTY: {

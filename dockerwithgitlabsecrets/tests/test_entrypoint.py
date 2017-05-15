@@ -29,6 +29,9 @@ class TestParseCliArguments(unittest.TestCase):
     """
     Tests for `parse_cli_arguments`.
     """
+    def test_parse_help_if_no_arguments(self):
+        self.assertIn("usage: docker-with-gitlab-secrets", parse_cli_arguments([]))
+
     def test_parse_only_config_location_argument(self):
         arguments = [_CONFIG_PARAMETER_FLAG, EXAMPLE_LOCATION]
         expected = CliConfiguration(config_location=EXAMPLE_LOCATION)
