@@ -70,8 +70,8 @@ Example:
 gitlab:
   url: https://gitlab.example.com
   token: my-token
-  project: hgi-systems  # Optional default project, which will be overriden by if `dwgs-project` is specified
-  namespace: hgi        # Optional default namespace  
+  project: hgi-systems  # Optional default project, which will be overriden if `dwgs-project` is specified
+  namespace: hgi        # Optional default namespace, which will be overriden if defined in the project (e.g. `hgi/hgi-systems`)
 ```
 
 
