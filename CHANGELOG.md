@@ -1,4 +1,8 @@
 # Change Log
+## 2.0.1 - 2017-05-17
+### Changed
+- Fixes `--help`. 
+
 ## 2.0.0 - 2017-05-15
 ### Changed
 - Prints help if no arguments are given.
