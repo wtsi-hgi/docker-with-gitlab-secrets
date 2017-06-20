@@ -1,5 +1,9 @@
 from setuptools import setup, find_packages
 
+import sys
+if sys.version_info < (3,6):
+    sys.exit("Python >= 3.6 is required")
+
 try:
     from pypandoc import convert
 
