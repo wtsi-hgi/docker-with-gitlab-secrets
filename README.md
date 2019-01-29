@@ -35,7 +35,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --dwgs-config DWGS_CONFIG
                         location of the configuration file (will default to
-                        /Users/cn13/.dwgs-config.yml)
+                        ~/.dwgs-config.yml)
   --dwgs-project DWGS_PROJECT
                         GitLab project (if not namespaced in the form
                         "namespace/project", the default namespace defined in
